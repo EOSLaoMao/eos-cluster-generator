@@ -47,7 +47,7 @@ copyfile('./genesis.json', genesis)
 config_dest = os.path.join(d, 'config.ini')
 config_tmpl = open('./config.ini').read()
 peers = ['p2p-peer-address = 0.0.0.0:9876']
-config = config_tmpl.format(bp_name='eosio', port='9876', key=bios_keys[0], peers='\n'.join(peers))
+config = config_tmpl.format(bp_name='eosio', port='9876', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
 with open(config_dest, 'w') as dest:
     dest.write(config)
  
@@ -74,7 +74,7 @@ for i in range(0, 5):
     copyfile('./genesis.json', genesis)
     config_dest = os.path.join(d, 'config.ini')
     config_tmpl = open('./config.ini').read()
-    config = config_tmpl.format(bp_name=bp_name, port=port, key=keys[i], peers='\n'.join(peers))
+    config = config_tmpl.format(bp_name=bp_name, port=port, key=keys[i], peers='\n'.join(peers), stale_production='false')
     pub, pri = eval(keys[i].split('=')[1])
     cmd = 'docker exec opt_nodeosd_1 /usr/local/bin/cleos system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 SYS" --stake-cpu "10.0000 SYS" --buy-ram-bytes "128 KiB"\n'
     account_script.write(cmd.format(pub=pub, bp_name=bp_name))
