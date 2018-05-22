@@ -1,0 +1,10 @@
+  nodeosd{index}:
+    image: johnnyzhao/eosio-dawn-v4.1.0
+    command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir
+    hostname: nodeosd
+    ports:
+      - {port}:{port}
+    expose:
+      - "{port}"
+    volumes:
+      - /data/eos-bp{index}/:/opt/eosio/bin/data-dir
