@@ -1,6 +1,6 @@
   nodeosd{index}:
     image: johnnyzhao/eosio-dawn-v4.1.0
-    command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir
+    command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain
     hostname: nodeosd
     ports:
       - {port}:{port}
