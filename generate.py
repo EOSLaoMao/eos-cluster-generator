@@ -2,8 +2,12 @@
 import os
 import random
 from shutil import copyfile
+from config import IP
+from constant import BIOS_DOCKER_COMPOSE, CMD_PREFIX
 
-IP = "192.168.1.16"
+
+def cmd_wrapper(cmd):
+    return " ".join([CMD_PREFIX, cmd, '\n'])
 
 def process_keys(f, as_list=True):
     keys = []
@@ -22,27 +26,8 @@ def process_keys(f, as_list=True):
     return keys if as_list else key_pairs
 
 def generate():
-    bios = """
-version: "3"
-
-services:
-  nodeosd:
-    image: johnnyzhao/eosio-dawn-v4.1.0
-    command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain
-    hostname: nodeosd
-    container_name: nodeosd
-    ports:
-      - 8888:8888
-      - 9876:9876
-    expose:
-      - "9876"
-    volumes:
-      - /data/bios-node:/opt/eosio/bin/data-dir
-
-"""
-
     f = open('docker-compose.yml', 'w')
-    f.write(bios)
+    f.write(BIOS_DOCKER_COMPOSE)
     d = '/data/bios-node'
     if not os.path.exists(d):
         os.mkdir(d)
@@ -60,7 +45,6 @@ services:
     config_tmpl = open('./config.ini').read()
     peers = ['p2p-peer-address = %s:9876' % IP]
     bios_keys = process_keys('bios_keys')
-    print bios_keys
     config = config_tmpl.format(bp_name='eosio', port='9876', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
     config += '\nhttp-server-address = 0.0.0.0:8888'
     with open(config_dest, 'w') as dest:
@@ -68,11 +52,10 @@ services:
      
     tmpl = open('docker-compose-tmpl').read()
     keys = process_keys('bp_keys')
-    print keys
 
     m = {'0': 'a', '6': 'b', '7': 'c', '8': 'd', '9': 'e'}
-    account_script = open('create_producers.sh', 'w')
-    reg_script = open('reg_producers.sh', 'w')
+    account_script = open('02_create_accounts.sh', 'aw')
+    reg_script = open('03_reg_producers.sh', 'w')
     prods = []
     port = 9875
     peer_prefix = 'p2p-peer-address = %s' % IP
@@ -81,7 +64,6 @@ services:
         prods.append(bp_name)
         line = tmpl.format(index=i, port=port)
         d = '/data/eos-bp{index}'.format(index=i)
-        print(d)
         if not os.path.exists(d):
             os.mkdir(d)
         f.write(line)
@@ -91,10 +73,10 @@ services:
         config_tmpl = open('./config.ini').read()
         config = config_tmpl.format(bp_name=bp_name, port=port, key=keys[i], peers='\n'.join(peers), stale_production='false')
         pub, pri = eval(keys[i].split('=')[1])
-        cmd = 'docker exec nodeosd /usr/local/bin/cleos system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 SYS" --stake-cpu "10.0000 SYS" --buy-ram-bytes "128 KiB"\n'
-        account_script.write(cmd.format(pub=pub, bp_name=bp_name))
-        cmd = 'docker exec nodeosd /usr/local/bin/cleos system regproducer {bp_name} {pub}\n'
-        reg_script.write(cmd.format(pub=pub, bp_name=bp_name))
+        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 SYS" --stake-cpu "10.0000 SYS" --buy-ram-bytes "128 KiB"'
+        account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
+        cmd = 'system regproducer {bp_name} {pub}'
+        reg_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
         with open(config_dest, 'w') as dest:
             dest.write(config)
         peers.append('%s:%d' % (peer_prefix, port))
@@ -102,52 +84,65 @@ services:
     f.close()
     account_script.close()
     reg_script.close()
-    print(prods)
     return prods
 
 
 def generate_import_script():
     keys = []
-    for f in ['voter_keys', 'bios_keys', 'bp_keys']:
+    for f in ['token_keys', 'bios_keys', 'bp_keys', 'voter_keys']:
         keys.extend(process_keys(f, as_list=False))
-    import_script = open('import_keys.sh', 'w')
+    import_script = open('00_import_keys.sh', 'w')
     for key_pair in keys:
         pub = key_pair['Public key']
         priv = key_pair['Private key']
-        cmd = 'docker exec nodeosd /usr/local/bin/cleos wallet import %s || true\n' % priv
-        import_script.write(cmd)
+        cmd = 'wallet import %s || true' % priv
+        import_script.write(cmd_wrapper(cmd))
     import_script.close()
 
 def generate_voters(prods):
     voter_keys = process_keys('voter_keys', as_list=False)
-    account_script = open('create_voter_account.sh', 'w')
-    token_script = open('issue_voter_token.sh', 'w')
-    delegate_script = open('delegate_voter_token.sh', 'w')
-    vote_script = open('vote.sh', 'w')
-    print voter_keys
+    account_script = open('02_create_accounts.sh', 'aw')
+    token_script = open('04_issue_voter_token.sh', 'w')
+    delegate_script = open('05_delegate_voter_token.sh', 'w')
+    vote_script = open('06_vote.sh', 'w')
     i = 0
     for key_pair in voter_keys:
         i += 1
         account = 'voters%d' % i
         pub = key_pair['Public key']
         priv = key_pair['Private key']
-        cmd = 'docker exec nodeosd /usr/local/bin/cleos system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 SYS" --stake-cpu "10.0000 SYS" --buy-ram-bytes "128 KiB"\n'
-        account_script.write(cmd.format(pub=pub, bp_name=account))
-        cmd = '''docker exec nodeosd /usr/local/bin/cleos push action eosio.token issue '{"to":"%s","quantity":"50000000.0000 SYS","memo":"issue"}' -p eosio\n''' % account
-        token_script.write(cmd)
+        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 SYS" --stake-cpu "10.0000 SYS" --buy-ram-bytes "128 KiB"'
+        account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
+        cmd = """push action eosio.token issue '{"to":"%s","quantity":"50000000.0000 SYS","memo":"issue"}' -p eosio""" % account
+        token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
         bps = ' '.join(prods[:len(prods)-2])
-        cmd = 'docker exec nodeosd /usr/local/bin/cleos system voteproducer prods %s %s\n' % (account, bps)
-        vote_script.write(cmd)
-        cmd = "docker exec nodeosd /usr/local/bin/cleos system delegatebw %s %s '25000000 SYS' '25000000 SYS' --transfer\n" % (account, account)
-        delegate_script.write(cmd)
+        cmd = 'system voteproducer prods %s %s' % (account, bps)
+        vote_script.write(cmd_wrapper(cmd))
+        cmd = 'system delegatebw %s %s "25000000 SYS" "25000000 SYS" --transfer' % (account, account)
+        delegate_script.write(cmd_wrapper(cmd))
     account_script.close()
     token_script.close()
     vote_script.close()
     delegate_script.close()
 
+def generate_eosio_token():
+    eosio_script = open('01_create_token.sh', 'w')
+    voter_keys = process_keys('token_keys', as_list=False)
+    pub = voter_keys[0]['Public key']
+    priv = voter_keys[0]['Private key']
+    cmd = 'cleos set contract eosio contracts/eosio.bios\n'
+    cmd += 'create account eosio eosio.token {pub} {pub}\n'.format(pub=pub)
+    cmd += 'cleos set contract eosio.token contracts/eosio.token\n'
+    cmd += """cleos push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 SYS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token
+cleos push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 SYS","memo":"issue"}' -p eosio
+cleos set contract eosio contracts/eosio.system
+"""
+    eosio_script.write(cmd_wrapper(cmd))
+    eosio_script.close()
 
 if __name__ == '__main__':
+    generate_eosio_token()
     prods = generate()
     generate_voters(prods)
     generate_import_script()
