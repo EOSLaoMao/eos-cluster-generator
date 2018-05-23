@@ -3,6 +3,8 @@ import os
 import random
 from shutil import copyfile
 
+IP = "192.168.1.16"
+
 def process_keys(f, as_list=True):
     keys = []
     key_pair = {}
@@ -21,43 +23,51 @@ def process_keys(f, as_list=True):
 
 def generate():
     bios = """
-    version: "3"
+version: "3"
 
-    services:
-      nodeosd:
-        image: johnnyzhao/eosio-dawn-v4.1.0
-        command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain
-        hostname: nodeosd
-        ports:
-          - 8888:8888
-          - 9876:9876
-        expose:
-          - "9876"
-        volumes:
-          - /data/bios-node:/opt/eosio/bin/data-dir
+services:
+  nodeosd:
+    image: johnnyzhao/eosio-dawn-v4.1.0
+    command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain
+    hostname: nodeosd
+    container_name: nodeosd
+    ports:
+      - 8888:8888
+      - 9876:9876
+    expose:
+      - "9876"
+    volumes:
+      - /data/bios-node:/opt/eosio/bin/data-dir
 
-    """
+"""
 
-
-    bios_keys = process_keys('bios_keys')
-    print bios_keys
     f = open('docker-compose.yml', 'w')
     f.write(bios)
     d = '/data/bios-node'
     if not os.path.exists(d):
         os.mkdir(d)
-    genesis = os.path.join(d, 'genesis.json')
-    copyfile('./genesis.json', genesis)
+
+    genesis = open('./genesis.json', 'w')
+    pub_key = process_keys('bios_keys', as_list=False)[0]['Public key']
+    content = open('./genesis-tmpl').read().replace('PUBKEY', pub_key)
+    print content, pub_key
+    genesis.write(content)
+    genesis.close()
+
+    dest_genesis = os.path.join(d, 'genesis.json')
+    copyfile('./genesis.json', dest_genesis)
     config_dest = os.path.join(d, 'config.ini')
     config_tmpl = open('./config.ini').read()
-    peers = ['p2p-peer-address = 192.168.1.167:9876']
+    peers = ['p2p-peer-address = %s:9876' % IP]
+    bios_keys = process_keys('bios_keys')
+    print bios_keys
     config = config_tmpl.format(bp_name='eosio', port='9876', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
     config += '\nhttp-server-address = 0.0.0.0:8888'
     with open(config_dest, 'w') as dest:
         dest.write(config)
      
     tmpl = open('docker-compose-tmpl').read()
-    keys = process_keys('keys')
+    keys = process_keys('bp_keys')
     print keys
 
     m = {'0': 'a', '6': 'b', '7': 'c', '8': 'd', '9': 'e'}
@@ -65,8 +75,8 @@ def generate():
     reg_script = open('reg_producer.sh', 'w')
     prods = []
     port = 9875
-    peer_prefix = 'p2p-peer-address = 192.168.1.167'
-    for i in range(0, 5):
+    peer_prefix = 'p2p-peer-address = %s' % IP
+    for i in range(0, len(bp_keys)):
         bp_name = ''.join([m[char] if char in m.keys() else char for char in 'bp%d' % i])
         line = tmpl.format(index=i, port=port)
         d = '/data/eos-bp{index}'.format(index=i)
