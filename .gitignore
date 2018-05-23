@@ -2,3 +2,4 @@
 *.sh
 .*
 docker-compose.yml
+genesis.json
