@@ -3,7 +3,7 @@ import os
 import random
 from shutil import copyfile
 from config import IP
-from constant import BIOS_DOCKER_COMPOSE, CMD_PREFIX
+from constant import BIOS_DOCKER_COMPOSE, CMD_PREFIX, SYS_ACCOUNTS
 
 
 def cmd_wrapper(cmd):
@@ -59,6 +59,7 @@ def generate():
     prods = []
     port = 9875
     peer_prefix = 'p2p-peer-address = %s' % IP
+
     for i in range(0, len(keys)):
         bp_name = ''.join([m[char] if char in m.keys() else char for char in 'bp%d' % i])
         prods.append(bp_name)
@@ -127,22 +128,37 @@ def generate_voters(prods):
     delegate_script.close()
 
 def generate_eosio_token():
-    eosio_script = open('01_create_token.sh', 'w')
+    eosio_script = open('01_create_token.sh', 'aw')
     voter_keys = process_keys('token_keys', as_list=False)
     pub = voter_keys[0]['Public key']
     priv = voter_keys[0]['Private key']
-    cmd = 'cleos set contract eosio contracts/eosio.bios\n'
-    cmd += 'create account eosio eosio.token {pub} {pub}\n'.format(pub=pub)
-    cmd += 'cleos set contract eosio.token contracts/eosio.token\n'
-    cmd += """cleos push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 SYS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token
-cleos push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 SYS","memo":"issue"}' -p eosio
-cleos set contract eosio contracts/eosio.system
-"""
+    cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
+    cmd += cmd_wrapper("""push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 SYS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token""")
+    cmd += cmd_wrapper("""push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 SYS","memo":"issue"}' -p eosio""")
+    cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
     eosio_script.write(cmd_wrapper(cmd))
     eosio_script.close()
 
+def generate_sys_accounts():
+    # generate sys account
+    eosio_script = open('01_create_token.sh', 'w')
+
+    pub = process_keys('token_keys', as_list=False)[0]['Public key']
+    eosio_script.write(cmd_wrapper('set contract eosio contracts/eosio.bios'))
+    eosio_script.write(cmd_wrapper('create account eosio eosio.token {pub} {pub}'.format(pub=pub)))
+
+    pub = process_keys('bios_keys', as_list=False)[0]['Public key']
+    for account in SYS_ACCOUNTS:
+        cmd = 'create account eosio {account} {pub} {pub}'
+        eosio_script.write(cmd_wrapper(cmd.format(pub=pub, account=account)))
+    eosio_script.close()
+
+
 if __name__ == '__main__':
+    os.system("rm *.sh")
+    generate_sys_accounts()
     generate_eosio_token()
     prods = generate()
     generate_voters(prods)
     generate_import_script()
+    os.system("chmod u+x *.sh")
