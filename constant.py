@@ -4,7 +4,7 @@ version: "3"
 
 services:
   nodeosd:
-    image: johnnyzhao/eosio-dawn-v4.1.0
+    image: johnnyzhao/eosio-dawn-v4.2.0
     command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain
     hostname: nodeosd
     container_name: nodeosd
