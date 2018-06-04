@@ -1,4 +1,4 @@
-CMD_PREFIX = "docker exec nodeosd /usr/local/bin/cleos"
+CMD_PREFIX = "docker exec nodeosd cleos"
 SYS_ACCOUNTS = ['eosio.bpay',
 'eosio.msig',
 'eosio.names',
@@ -13,8 +13,8 @@ version: "3"
 
 services:
   nodeosd:
-    image: johnnyzhao/eosio-dawn-v4.2.0
-    command: /usr/local/bin/nodeosd.sh --data-dir /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --replay-blockchain
+    image: johnnyzhao/eos:v1.0.1-unstake-15-mins
+    command: nodeosd.sh --data-dir /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --replay-blockchain
     hostname: nodeosd
     container_name: nodeosd
     ports:
