@@ -4,7 +4,7 @@ This tool is a Docker based local multi-bp config generater. The only thing you 
 
 For test purpose, this tool use a self built docker image with eos source code changed unstage timeframe from 3 days to 5 mins.
 
-The image this tool use is : `johnnyzhao/eos:v1.0.1-unstake-5-mins`, as you can see, we have change some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/1/files
+The image this tool use is : `johnnyzhao/eos:v1.0.1-unstake-5-mins`, as you can see, we have changed some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/1/files
 
 ### 0. Clone this project
 
@@ -59,7 +59,7 @@ this command will generate the following files under project dir:
 
 ```
 
-`docker-compose.yml` file contains the service you should start for bios-node and bp nodes.
+`docker-compose.yml` file contains the service you should start for bios-node and BP nodes.
 
 these bash scripts contains the necessery commands all the way to voting. The number in script names indicates the sequence.
 
@@ -67,7 +67,7 @@ Also, `generate.py` will generate data dirs for each BP under `/data` dir.
 
 ### 4. RUN!
 
-first, use docker-compose to start bios and bp node containers.
+first, use docker-compose to start bios and BP node containers.
 
 ```
 docker-compose up -d
