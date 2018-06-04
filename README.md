@@ -73,9 +73,13 @@ first, use docker-compose to start bios and BP node containers.
 docker-compose up -d
 ```
 
-Then you can check the log of `nodeosd` container, which is bios node.
+Then can check the log of `nodeosd` container, which is bios node. You should see `eosio` generating blocks pretty soon.
 
-You should see `eosio` generating blocks pretty soon.
+After that, you should create a wallet to import your keys.
+
+```
+docker exec nodeosd wallet create
+```
 
 Then, run those numbered bash scripts one by one, all the way to voting.
 
