@@ -3,7 +3,9 @@ import os
 import random
 from shutil import copyfile
 from config import IP
-from constant import BIOS_DOCKER_COMPOSE, CMD_PREFIX, SYS_ACCOUNTS
+from constant import (BIOS_DOCKER_COMPOSE,
+                      CMD_PREFIX,
+                      SYSTEM_ACCOUNTS)
 
 
 def cmd_wrapper(cmd):
@@ -148,7 +150,7 @@ def generate_sys_accounts():
     eosio_script.write(cmd_wrapper('create account eosio eosio.token {pub} {pub}'.format(pub=pub)))
 
     pub = process_keys('bios_keys', as_list=False)[0]['Public key']
-    for account in SYS_ACCOUNTS:
+    for account in SYSTEM_ACCOUNTS:
         cmd = 'create account eosio {account} {pub} {pub}'
         eosio_script.write(cmd_wrapper(cmd.format(pub=pub, account=account)))
     eosio_script.close()
