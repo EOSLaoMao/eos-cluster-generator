@@ -4,7 +4,7 @@ This tool is a Docker based local multi-bp config generater. The only thing you 
 
 For test purpose, this tool use a self built docker image with eos source code changed unstage timeframe from 3 days to 5 mins.
 
-The image this tool use is : `johnnyzhao/eos:v1.0.1-unstake-5-mins`
+The image this tool use is : `johnnyzhao/eos:v1.0.1-unstake-5-mins`, as you can see, we have change some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/1/files
 
 ### 0. Clone this project
 
