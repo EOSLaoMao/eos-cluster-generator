@@ -6,6 +6,8 @@ For test purpose, this tool use a self built docker image with eos source code c
 
 The image this tool use is : `johnnyzhao/eos:v1.0.1-unstake-5-mins`, as you can see, we have changed some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/1/files
 
+You should pull or build this image before continue.
+
 ### 0. Clone this project
 
 Clone this project and change the `IP` to your host ip in `config.py`
@@ -89,20 +91,31 @@ Next, you can further test BP failover or voting!
 
 OR, you can test `unstake`, to make sure you can get your token back!
 
-### 5. Test unstake in 5 mins with 2 command!!!
+### 5. Test unstake in 5 mins with 1 command!!!
 
-First, you have to `undelegatebw` certain amount of tokens.
+The only command you need to execute is `undelegatebw`:
 
 ```
 docker exec nodeosd cleos system undelegatebw voters1 voters1 "100 SYS" "200 SYS"
 ```
 
-and wait for 5 mins, then execute refund command:
+and wait for 5 mins, then query your balance:
 
 ```
-cleos push action eosio refund '{"owner": "voters1"}' -p voters1
+docker exec nodeosd cleos get currency balance eosio.token voters1
 ```
 
-There you go, but I think there are like 1000+ functionalities to test, right?
+and the output should be:
+
+```
+300 SYS
+```
+
+### Conclusion
+
+1. The voting works as expected.
+2. The `delegatebw` and `undelegatebw` works as expected.
+3. The network needs to reach 15% votings, until then, you cannot unstake all tokens.
+4. staked tokens weather be used for voting or not, both can be unstaked after 15% voting readched.
 
 Good luck with mainnet launching, guys!
