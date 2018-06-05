@@ -6,7 +6,6 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.ramfee',
 'eosio.saving',
 'eosio.stake',
-'eosio.token',
 'eosio.upay']
 BIOS_DOCKER_COMPOSE = """
 version: "3"
