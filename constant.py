@@ -13,7 +13,7 @@ version: "3"
 
 services:
   nodeosd:
-    image: johnnyzhao/eos:v1.0.1-unstake-5-mins
+    image: heipacker2016/eos:v1.0.1-unstake-5-mins-eos
     command: nodeosd.sh --data-dir /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --replay-blockchain
     hostname: nodeosd
     container_name: nodeosd
