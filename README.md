@@ -80,7 +80,7 @@ Then can check the log of `nodeosd` container, which is bios node. You should se
 After that, you should create a wallet to import your keys.
 
 ```
-docker exec nodeosd wallet create
+docker exec nodeosd cleos wallet create
 ```
 
 Then, run those numbered bash scripts one by one, all the way to voting.
