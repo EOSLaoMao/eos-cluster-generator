@@ -1,6 +1,6 @@
 FROM eosio/builder as builder
 ARG branch=test/unstake-in-5-mins
-ARG symbol=SYS
+ARG symbol=EOS
 
 RUN git clone -b $branch https://github.com/EOSLaoMao/eos.git --recursive \
     && cd eos && echo "$branch:$(git rev-parse HEAD)" > /etc/eosio-version \

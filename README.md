@@ -4,7 +4,7 @@ This tool is a Docker based local multi-bp config generater. The only thing you 
 
 For test purpose, this tool use a self built docker image with eos source code changed unstage timeframe from 3 days to 5 mins.
 
-The image this tool use is : `johnnyzhao/eos:v1.0.1-unstake-5-mins`, as you can see, we have changed some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/1/files
+The image this tool use is : `heipacker2016/eos:v1.0.1-unstake-5-mins-eos`, as you can see, we have changed some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/1/files
 
 You should pull or build this image before continue.
 
@@ -96,7 +96,7 @@ OR, you can test `unstake`, to make sure you can get your token back!
 The only command you need to execute is `undelegatebw`:
 
 ```
-docker exec nodeosd cleos system undelegatebw voters1 voters1 "100 SYS" "200 SYS"
+docker exec nodeosd cleos system undelegatebw voters1 voters1 "100 EOS" "200 EOS"
 ```
 
 and wait for 5 mins, then query your balance:
@@ -108,7 +108,7 @@ docker exec nodeosd cleos get currency balance eosio.token voters1
 and the output should be:
 
 ```
-300 SYS
+300 EOS
 ```
 
 ### Conclusion
