@@ -7,12 +7,13 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.saving',
 'eosio.stake',
 'eosio.vpay']
+DOCKER_IMAGE = "johnnyzhao/eos:mainnet-1.0.6-unstake-in-5mins"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
 services:
   nodeosd:
-    image: heipacker2016/eos:v1.0.1-unstake-5-mins-eos
+    image: %s
     command: nodeosd.sh --data-dir /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --replay-blockchain
     hostname: nodeosd
     container_name: nodeosd
@@ -24,4 +25,4 @@ services:
     volumes:
       - /data/bios-node:/opt/eosio/bin/data-dir
 
-"""
+""" % DOCKER_IMAGE

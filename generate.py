@@ -5,7 +5,8 @@ from shutil import copyfile
 from config import IP
 from constant import (BIOS_DOCKER_COMPOSE,
                       CMD_PREFIX,
-                      SYSTEM_ACCOUNTS)
+                      SYSTEM_ACCOUNTS,
+                      DOCKER_IMAGE)
 
 
 def cmd_wrapper(cmd):
@@ -28,6 +29,7 @@ def process_keys(f, as_list=True):
     return keys if as_list else key_pairs
 
 def generate():
+    blacklist_prods = []
     f = open('docker-compose.yml', 'w')
     f.write(BIOS_DOCKER_COMPOSE)
     d = '/data/bios-node'
@@ -43,14 +45,11 @@ def generate():
 
     dest_genesis = os.path.join(d, 'genesis.json')
     copyfile('./genesis.json', dest_genesis)
-    config_dest = os.path.join(d, 'config.ini')
+    bios_config_dest = os.path.join(d, 'config.ini')
     config_tmpl = open('./config.ini').read()
     peers = ['p2p-peer-address = %s:9876' % IP]
     bios_keys = process_keys('bios_keys')
-    config = config_tmpl.format(bp_name='eosio', port='9876', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
-    config += '\nhttp-server-address = 0.0.0.0:8888'
-    with open(config_dest, 'w') as dest:
-        dest.write(config)
+
      
     tmpl = open('docker-compose-tmpl').read()
     keys = process_keys('bp_keys')
@@ -65,7 +64,7 @@ def generate():
     for i in range(0, len(keys)):
         bp_name = ''.join([m[char] if char in m.keys() else char for char in 'bp%d' % i])
         prods.append(bp_name)
-        line = tmpl.format(index=i, port=port)
+        line = tmpl.format(index=i, port=port, image=DOCKER_IMAGE)
         d = '/data/eos-bp{index}'.format(index=i)
         if not os.path.exists(d):
             os.mkdir(d)
@@ -75,6 +74,9 @@ def generate():
         config_dest = os.path.join(d, 'config.ini')
         config_tmpl = open('./config.ini').read()
         config = config_tmpl.format(bp_name=bp_name, port=port, key=keys[i], peers='\n'.join(peers), stale_production='false')
+        if i%4 != 0:
+            blacklist_prods.append(bp_name)
+            config += '\nactor-blacklist = eoshackerone'
         pub, pri = eval(keys[i].split('=')[1])
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 EOS" --stake-cpu "10.0000 EOS" --buy-ram-kbytes "128 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
@@ -84,10 +86,17 @@ def generate():
             dest.write(config)
         peers.append('%s:%d' % (peer_prefix, port))
         port -= 1
+
+    # generate bios node config
+    bios_config = config_tmpl.format(bp_name='eosio', port='9876', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
+    bios_config += '\nhttp-server-address = 0.0.0.0:8888'
+    with open(bios_config_dest, 'w') as dest:
+        dest.write(bios_config)
+
     f.close()
     account_script.close()
     reg_script.close()
-    return prods
+    return prods, blacklist_prods
 
 
 def generate_import_script():
@@ -102,7 +111,7 @@ def generate_import_script():
         import_script.write(cmd_wrapper(cmd))
     import_script.close()
 
-def generate_voters(prods):
+def generate_voters(prods, backlist_prods):
     voter_keys = process_keys('voter_keys', as_list=False)
     account_script = open('02_create_accounts.sh', 'aw')
     token_script = open('04_issue_voter_token.sh', 'w')
@@ -119,7 +128,7 @@ def generate_voters(prods):
         cmd = """push action eosio.token issue '{"to":"%s","quantity":"50000000.0000 EOS","memo":"issue"}' -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
-        bps = ' '.join(prods[:len(prods)-2])
+        bps = ' '.join(list(set(prods[:len(prods)-2]) | set(backlist_prods)))
         cmd = 'system voteproducer prods %s %s' % (account, bps)
         vote_script.write(cmd_wrapper(cmd))
         cmd = 'system delegatebw %s %s "25000000 EOS" "25000000 EOS" --transfer' % (account, account)
@@ -160,7 +169,8 @@ if __name__ == '__main__':
     os.system("rm *.sh")
     generate_sys_accounts()
     generate_eosio_token()
-    prods = generate()
-    generate_voters(prods)
+    prods, blacklist_prods = generate()
+    generate_voters(prods, blacklist_prods)
     generate_import_script()
     os.system("chmod u+x *.sh")
+    print(set(prods) - set(blacklist_prods))

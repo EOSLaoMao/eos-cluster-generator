@@ -1,1 +1,2 @@
-IP = "192.168.1.121"
+import socket
+IP = socket.gethostbyname(socket.gethostname())

@@ -4,17 +4,13 @@ This tool is a Docker based local multi-bp config generater. The only thing you 
 
 For test purpose, this tool use a self built docker image with eos source code changed unstage timeframe from 3 days to 5 mins.
 
-The image this tool use is : `heipacker2016/eos:v1.0.1-unstake-5-mins-eos`, as you can see, we have changed some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/1/files
+The image this tool use is : `johnnyzhao/eos:mainnet-1.0.6-unstake-in-5mins`, as you can see, we have changed some paramaters to make sure you can get you tokens back in 5 mins. The change is here: https://github.com/EOSLaoMao/eos/pull/5/files
 
 You should pull or build this image before continue.
 
-### 0. Clone this project
-
-Clone this project and change the `IP` to your host ip in `config.py`
-
 ### 1. Prepare key pairs
 
-Create 4 files namingly `bios_keys`, `token_keys`, `bp_keys`, `voter_keys` under the directory of this project. 
+Clone this project and create 4 files namingly `bios_keys`, `token_keys`, `bp_keys`, `voter_keys` under the directory of this repo. 
 
 Put bios node key pair and key pair for account `eosio.token` into file `bios_keys` and `token_keys` using the format as follows:
 
@@ -23,7 +19,7 @@ Private key: 5HvwrfNLVw9bKFXXXXXXX
 Public key: EOS7qfbpbAjqXXXXXXX
 ```
 
-Put key pairs of BPs and voters into file `bp_keys` and `voter_keys` using the same format as above. 
+Put key pairs of BPs and voters into file `bp_keys` and `voter_keys` using the same format as above.
 
 TO SIMULATE VOTING WITH 21 BPs, YOU HAVE TO PROVIDE MORE THAN 21 KEY PAIRS IN `bp_keys`
 
