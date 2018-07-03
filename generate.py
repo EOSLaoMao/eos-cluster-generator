@@ -131,7 +131,7 @@ def generate_voters(prods, backlist_prods):
         bps = ' '.join(list(set(prods[:len(prods)-2]) | set(backlist_prods)))
         cmd = 'system voteproducer prods %s %s' % (account, bps)
         vote_script.write(cmd_wrapper(cmd))
-        cmd = 'system delegatebw %s %s "25000000 EOS" "25000000 EOS" --transfer' % (account, account)
+        cmd = 'system delegatebw %s %s "25000000 EOS" "25000000 EOS"' % (account, account)
         delegate_script.write(cmd_wrapper(cmd))
     account_script.close()
     token_script.close()

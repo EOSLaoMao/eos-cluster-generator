@@ -1,4 +1,5 @@
-CMD_PREFIX = "docker exec nodeosd cleos --wallet-url http://192.168.1.12:8900" 
+from config import IP
+CMD_PREFIX = "docker exec nodeosd cleos --wallet-url http://%s:8900" % IP
 SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.msig',
 'eosio.names',
