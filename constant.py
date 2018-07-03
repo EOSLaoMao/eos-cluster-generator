@@ -1,4 +1,4 @@
-CMD_PREFIX = "docker exec nodeosd cleos"
+CMD_PREFIX = "docker exec nodeosd cleos --wallet-url http://192.168.1.12:8900" 
 SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.msig',
 'eosio.names',
@@ -24,5 +24,16 @@ services:
       - "9876"
     volumes:
       - /data/bios-node:/opt/eosio/bin/data-dir
+  keosd:
+    image: %s
+    command: /opt/eosio/bin/keosd --wallet-dir /opt/eosio/bin/data-dir --http-server-address=0.0.0.0:8900
+    hostname: keosd
+    container_name: keosd
+    ports:
+      - 8900:8900
+    links:
+      - nodeosd
+    volumes:
+      - /data/keosd:/opt/eosio/bin/data-dir
 
-""" % DOCKER_IMAGE
+""" % (DOCKER_IMAGE,DOCKER_IMAGE)
