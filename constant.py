@@ -15,7 +15,7 @@ version: "3"
 services:
   nodeosd:
     image: %s
-    command: nodeosd.sh --data-dir /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --replay-blockchain
+    command: nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain --filter-on "bankofmemory:release:" --genesis-json /opt/eosio/bin/data-dir/genesis.json --contracts-console
     hostname: nodeosd
     container_name: nodeosd
     ports:
