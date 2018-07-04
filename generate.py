@@ -8,6 +8,15 @@ from constant import (BIOS_DOCKER_COMPOSE,
                       SYSTEM_ACCOUNTS,
                       DOCKER_IMAGE)
 
+FILES = [
+    '00_import_keys.sh',
+    '01_create_token.sh',
+    '02_create_accounts.sh',
+    '03_reg_producers.sh',
+    '04_issue_voter_token.sh',
+    '05_delegate_voter_token.sh',
+    '06_vote.sh',
+]
 
 def cmd_wrapper(cmd):
     return " ".join([CMD_PREFIX, cmd, '\n'])
@@ -55,8 +64,8 @@ def generate():
     keys = process_keys('bp_keys')
 
     m = {'0': 'a', '6': 'b', '7': 'c', '8': 'd', '9': 'e'}
-    account_script = open('02_create_accounts.sh', 'aw')
-    reg_script = open('03_reg_producers.sh', 'w')
+    account_script = open(FILES[2], 'aw')
+    reg_script = open(FILES[3], 'w')
     prods = []
     port = 9875
     peer_prefix = 'p2p-peer-address = %s' % IP
@@ -103,7 +112,7 @@ def generate_import_script():
     keys = []
     for f in ['token_keys', 'bios_keys', 'bp_keys', 'voter_keys']:
         keys.extend(process_keys(f, as_list=False))
-    import_script = open('00_import_keys.sh', 'w')
+    import_script = open(FILES[0], 'w')
     for key_pair in keys:
         pub = key_pair['Public key']
         priv = key_pair['Private key']
@@ -113,10 +122,10 @@ def generate_import_script():
 
 def generate_voters(prods, backlist_prods):
     voter_keys = process_keys('voter_keys', as_list=False)
-    account_script = open('02_create_accounts.sh', 'aw')
-    token_script = open('04_issue_voter_token.sh', 'w')
-    delegate_script = open('05_delegate_voter_token.sh', 'w')
-    vote_script = open('06_vote.sh', 'w')
+    account_script = open(FILES[2], 'aw')
+    token_script = open(FILES[4], 'w')
+    delegate_script = open(FILES[5], 'w')
+    vote_script = open(FILES[6], 'w')
     i = 0
     for key_pair in voter_keys:
         i += 1
@@ -139,7 +148,7 @@ def generate_voters(prods, backlist_prods):
     delegate_script.close()
 
 def generate_eosio_token():
-    eosio_script = open('01_create_token.sh', 'aw')
+    eosio_script = open(FILES[1], 'aw')
     voter_keys = process_keys('token_keys', as_list=False)
     pub = voter_keys[0]['Public key']
     priv = voter_keys[0]['Private key']
@@ -152,7 +161,7 @@ def generate_eosio_token():
 
 def generate_sys_accounts():
     # generate sys account
-    eosio_script = open('01_create_token.sh', 'w')
+    eosio_script = open(FILES[1], 'w')
 
     pub = process_keys('token_keys', as_list=False)[0]['Public key']
     eosio_script.write(cmd_wrapper('set contract eosio contracts/eosio.bios'))
@@ -172,5 +181,7 @@ if __name__ == '__main__':
     prods, blacklist_prods = generate()
     generate_voters(prods, blacklist_prods)
     generate_import_script()
+    f = open('run_all.sh', 'w')
+    f.write("\nsleep 2\n".join(['./'+f for f in FILES]))
     os.system("chmod u+x *.sh")
     print(set(prods) - set(blacklist_prods))
