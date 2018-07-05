@@ -1,5 +1,6 @@
 from config import IP
 CMD_PREFIX = "docker exec nodeosd cleos --wallet-url http://%s:8900" % IP
+CMD_PREFIX_KEOSD = "docker exec keosd"
 SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.msig',
 'eosio.names',

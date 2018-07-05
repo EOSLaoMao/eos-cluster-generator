@@ -5,6 +5,7 @@ from shutil import copyfile
 from config import IP
 from constant import (BIOS_DOCKER_COMPOSE,
                       CMD_PREFIX,
+                      CMD_PREFIX_KEOSD,
                       SYSTEM_ACCOUNTS,
                       DOCKER_IMAGE)
 
@@ -17,9 +18,10 @@ FILES = [
     '05_delegate_voter_token.sh',
     '06_vote.sh',
 ]
+WALLET_SCRIPT = "create_wallet.sh"
 
-def cmd_wrapper(cmd):
-    return " ".join([CMD_PREFIX, cmd, '\n'])
+def cmd_wrapper(cmd, prefix=CMD_PREFIX):
+    return " ".join([prefix, cmd, '\n'])
 
 def process_keys(f, as_list=True):
     keys = []
@@ -113,6 +115,7 @@ def generate_import_script():
     for f in ['token_keys', 'bios_keys', 'bp_keys', 'voter_keys']:
         keys.extend(process_keys(f, as_list=False))
     import_script = open(FILES[0], 'w')
+    import_script.write("./%s\n" % WALLET_SCRIPT)
     for key_pair in keys:
         pub = key_pair['Public key']
         priv = key_pair['Private key']
@@ -173,9 +176,20 @@ def generate_sys_accounts():
         eosio_script.write(cmd_wrapper(cmd.format(pub=pub, account=account)))
     eosio_script.close()
 
+def generate_wallet_script():
+    wallet_script = open(WALLET_SCRIPT, 'w')
+    wallet_script.write(cmd_wrapper("rm /opt/eosio/bin/data-dir/default.wallet || true", CMD_PREFIX_KEOSD))
+    wallet_script.write(cmd_wrapper("cleos wallet create -n default", CMD_PREFIX_KEOSD))
+
+def generate_start_script():
+    start_script = open("start.sh", 'w')
+    start_script.write('docker-compose up -d\n./run_all.sh')
+
 
 if __name__ == '__main__':
     os.system("rm *.sh")
+    generate_start_script()
+    generate_wallet_script()
     generate_sys_accounts()
     generate_eosio_token()
     prods, blacklist_prods = generate()
