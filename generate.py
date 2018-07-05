@@ -132,7 +132,7 @@ def generate_voters(prods, backlist_prods):
     i = 0
     for key_pair in voter_keys:
         i += 1
-        account = 'voters%d' % i
+        account = 'voter%d' % i
         pub = key_pair['Public key']
         priv = key_pair['Private key']
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 EOS" --stake-cpu "10.0000 EOS" --buy-ram-kbytes "128 KiB"'
@@ -179,15 +179,22 @@ def generate_sys_accounts():
 def generate_wallet_script():
     wallet_script = open(WALLET_SCRIPT, 'w')
     wallet_script.write(cmd_wrapper("rm /opt/eosio/bin/data-dir/default.wallet || true", CMD_PREFIX_KEOSD))
-    wallet_script.write(cmd_wrapper("cleos wallet create -n default", CMD_PREFIX_KEOSD))
+    wallet_script.write(cmd_wrapper("cleos wallet create -n default > wallet_password", CMD_PREFIX_KEOSD))
+    wallet_script.close()
 
 def generate_start_script():
     start_script = open("start.sh", 'w')
-    start_script.write('docker-compose up -d\n./run_all.sh')
+    start_script.write('source bashrc\ndocker-compose up -d\n')
+    start_script.write("\nsleep 2\n".join(['./'+f for f in FILES]))
+    start_script.close()
+
+    bashrc_script = open("bashrc", 'w')
+    bashrc_script.write('alias cleos="%s"' % CMD_PREFIX)
+    bashrc_script.close()
 
 
 if __name__ == '__main__':
-    os.system("rm *.sh")
+    os.system("rm 0*.sh")
     generate_start_script()
     generate_wallet_script()
     generate_sys_accounts()
@@ -195,7 +202,5 @@ if __name__ == '__main__':
     prods, blacklist_prods = generate()
     generate_voters(prods, blacklist_prods)
     generate_import_script()
-    f = open('run_all.sh', 'w')
-    f.write("\nsleep 2\n".join(['./'+f for f in FILES]))
     os.system("chmod u+x *.sh")
     print(set(prods) - set(blacklist_prods))
