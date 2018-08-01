@@ -1,0 +1,10 @@
+cleos multisig approve bp1 ramincrease1 '{"actor": "bp1", "permission":"active"}' -p bp1
+cleos multisig approve bp1 ramincrease1 '{"actor": "bp2", "permission":"active"}' -p bp2
+cleos multisig approve bp1 ramincrease1 '{"actor": "bp3", "permission":"active"}' -p bp3
+cleos multisig approve bp1 ramincrease1 '{"actor": "bp4", "permission":"active"}' -p bp4
+cleos multisig approve bp1 ramincrease1 '{"actor": "bp5", "permission":"active"}' -p bp5
+cleos multisig approve bp1 ramincrease1 '{"actor": "bpa", "permission":"active"}' -p bpa
+cleos multisig approve bp1 ramincrease1 '{"actor": "bpb", "permission":"active"}' -p bpb
+cleos multisig approve bp1 ramincrease1 '{"actor": "bpc", "permission":"active"}' -p bpc
+cleos multisig approve bp1 ramincrease1 '{"actor": "bpd", "permission":"active"}' -p bpd
+cleos multisig approve bp1 ramincrease1 '{"actor": "bpe", "permission":"active"}' -p bpe
