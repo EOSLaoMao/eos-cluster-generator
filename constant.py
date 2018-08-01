@@ -1,6 +1,7 @@
 from config import IP
-CMD_PREFIX = "docker exec nodeosd cleos --wallet-url http://%s:8900" % IP
-CMD_PREFIX_KEOSD = "docker exec keosd"
+#CMD_PREFIX = "docker exec nodeosd cleos --wallet-url http://%s:8900" % IP
+CMD_PREFIX = "docker exec nodeosd cleos"
+CMD_PREFIX_KEOSD = "docker exec nodeosd"
 SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.msig',
 'eosio.names',
@@ -9,14 +10,14 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.saving',
 'eosio.stake',
 'eosio.vpay']
-DOCKER_IMAGE = "johnnyzhao/eos:mainnet-1.0.6-unstake-in-5mins"
+DOCKER_IMAGE = "johnnyzhao/eos:official-1.1.1"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
 services:
   nodeosd:
     image: %s
-    command: nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain --filter-on "bankofmemory:release:" --genesis-json /opt/eosio/bin/data-dir/genesis.json --contracts-console
+    command: nodeosd.sh --data-dir "/opt/eosio/bin/data-dir" --genesis-json "/opt/eosio/bin/data-dir/genesis.json"
     hostname: nodeosd
     container_name: nodeosd
     ports:
@@ -29,7 +30,7 @@ services:
   keosd:
     image: %s
     command: /opt/eosio/bin/keosd --wallet-dir /opt/eosio/bin/data-dir --http-server-address=0.0.0.0:8900
-    hostname: keosd
+    hostname: nodeosd
     container_name: keosd
     ports:
       - 8900:8900

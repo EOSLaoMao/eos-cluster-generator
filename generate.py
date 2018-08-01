@@ -89,7 +89,7 @@ def generate():
             blacklist_prods.append(bp_name)
             config += '\nactor-blacklist = eoshackerone'
         pub, pri = eval(keys[i].split('=')[1])
-        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 EOS" --stake-cpu "10.0000 EOS" --buy-ram-kbytes "128 KiB"'
+        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
         cmd = 'system regproducer {bp_name} {pub}'
         reg_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
@@ -119,7 +119,7 @@ def generate_import_script():
     for key_pair in keys:
         pub = key_pair['Public key']
         priv = key_pair['Private key']
-        cmd = 'wallet import %s || true' % priv
+        cmd = 'wallet import --private-key=%s || true' % priv
         import_script.write(cmd_wrapper(cmd))
     import_script.close()
 
@@ -135,7 +135,7 @@ def generate_voters(prods, backlist_prods):
         account = 'voter%d' % i
         pub = key_pair['Public key']
         priv = key_pair['Private key']
-        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10.0000 EOS" --stake-cpu "10.0000 EOS" --buy-ram-kbytes "128 KiB"'
+        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
         cmd = """push action eosio.token issue '{"to":"%s","quantity":"50000000.0000 EOS","memo":"issue"}' -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
@@ -158,6 +158,7 @@ def generate_eosio_token():
     cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
     cmd += cmd_wrapper("""push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 EOS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token""")
     cmd += cmd_wrapper("""push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 EOS","memo":"issue"}' -p eosio""")
+    cmd += cmd_wrapper("set contract eosio.msig contracts/eosio.msig")
     cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
     eosio_script.write(cmd)
     eosio_script.close()

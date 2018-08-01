@@ -1,6 +1,6 @@
   nodeosd{index}:
     image: {image}
-    command: nodeosd.sh --data-dir /opt/eosio/bin/data-dir --replay-blockchain --filter-on "bankofmemory:release:" --genesis-json /opt/eosio/bin/data-dir/genesis.json --contracts-console
+    command: nodeosd.sh --data-dir "/opt/eosio/bin/data-dir" --genesis-json "/opt/eosio/bin/data-dir/genesis.json"
     hostname: nodeosd
     container_name: nodeosd{index}
     ports:
