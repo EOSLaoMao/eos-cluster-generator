@@ -10,7 +10,7 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.saving',
 'eosio.stake',
 'eosio.vpay']
-DOCKER_IMAGE = "johnnyzhao/eos:official-1.1.1"
+DOCKER_IMAGE = "eoslaomao/eos:mainnet-1.1.1"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
@@ -27,16 +27,4 @@ services:
       - "9876"
     volumes:
       - /data/bios-node:/opt/eosio/bin/data-dir
-  keosd:
-    image: %s
-    command: /opt/eosio/bin/keosd --wallet-dir /opt/eosio/bin/data-dir --http-server-address=0.0.0.0:8900
-    hostname: nodeosd
-    container_name: keosd
-    ports:
-      - 8900:8900
-    links:
-      - nodeosd
-    volumes:
-      - /data/keosd:/opt/eosio/bin/data-dir
-
-""" % (DOCKER_IMAGE,DOCKER_IMAGE)
+""" % DOCKER_IMAGE

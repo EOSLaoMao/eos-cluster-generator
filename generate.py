@@ -159,6 +159,7 @@ def generate_eosio_token():
     cmd += cmd_wrapper("""push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 EOS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token""")
     cmd += cmd_wrapper("""push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 EOS","memo":"issue"}' -p eosio""")
     cmd += cmd_wrapper("set contract eosio.msig contracts/eosio.msig")
+    cmd += cmd_wrapper("""push action eosio setpriv '{"account": "eosio.msig", "is_priv": 1}' -p eosio""")
     cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
     eosio_script.write(cmd)
     eosio_script.close()
