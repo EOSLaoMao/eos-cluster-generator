@@ -112,7 +112,7 @@ def generate():
 
 def generate_import_script():
     keys = []
-    for f in ['token_keys', 'bios_keys', 'bp_keys', 'voter_keys']:
+    for f in ['bios_keys', 'bp_keys', 'voter_keys']:
         keys.extend(process_keys(f, as_list=False))
     import_script = open(FILES[0], 'w')
     import_script.write("./%s\n" % WALLET_SCRIPT)
@@ -152,9 +152,6 @@ def generate_voters(prods, backlist_prods):
 
 def generate_eosio_token():
     eosio_script = open(FILES[1], 'aw')
-    voter_keys = process_keys('token_keys', as_list=False)
-    pub = voter_keys[0]['Public key']
-    priv = voter_keys[0]['Private key']
     cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
     cmd += cmd_wrapper("""push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 EOS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token""")
     cmd += cmd_wrapper("""push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 EOS","memo":"issue"}' -p eosio""")
@@ -168,9 +165,7 @@ def generate_sys_accounts():
     # generate sys account
     eosio_script = open(FILES[1], 'w')
 
-    pub = process_keys('token_keys', as_list=False)[0]['Public key']
     eosio_script.write(cmd_wrapper('set contract eosio contracts/eosio.bios'))
-    eosio_script.write(cmd_wrapper('create account eosio eosio.token {pub} {pub}'.format(pub=pub)))
 
     pub = process_keys('bios_keys', as_list=False)[0]['Public key']
     for account in SYSTEM_ACCOUNTS:

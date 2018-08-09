@@ -3,6 +3,7 @@ from config import IP
 CMD_PREFIX = "docker exec nodeosd cleos"
 CMD_PREFIX_KEOSD = "docker exec nodeosd"
 SYSTEM_ACCOUNTS = ['eosio.bpay',
+'eosio.token',
 'eosio.msig',
 'eosio.names',
 'eosio.ram',
@@ -10,7 +11,7 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.saving',
 'eosio.stake',
 'eosio.vpay']
-DOCKER_IMAGE = "eoslaomao/eos:mainnet-1.1.1"
+DOCKER_IMAGE = "eoslaomao/eos:1.1.4"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
