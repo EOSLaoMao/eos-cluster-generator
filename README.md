@@ -1,6 +1,6 @@
 # EOS Cluster Generator
 
-This tool is a Docker based local multi-bp config generater. You can use it to boot up an EOS testnet on your laptop in 5 minutes.
+EOS Cluster Generator is a Docker based multi-bp config generater. You can use it to boot up an EOS testnet on your laptop in 5 minutes.
 
 
 ## Quick Start
@@ -71,9 +71,9 @@ docker logs -f nodeosd
 ```
 
 
-### 3. Resign `eosio` account
+### 3. Resign `eosio` and other system accounts
 
-To fully simulate an EOS chain just like EOS Mainnet, you should resign all system account to `eosio.prods` permission. Functions like multisig proposal will only work after system account are properly resigned.
+To fully simulate an EOS chain just like EOS Mainnet, you should resign all system accounts to `eosio.prods` permission. Functions like multisig proposal will only work after system accounts are properly resigned.
 
 To resign system accounts, just run `resign.sh`
 
@@ -84,7 +84,7 @@ To resign system accounts, just run `resign.sh`
 Now, you have a full fledged EOS chain on your laptop!
 
 
-### STOP and clear all the data
+### STOP and CLEAR
 
 Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down and rm `./data/` dir
 
@@ -169,9 +169,9 @@ cleos get account eosio
 
 Enjoy!
 
-### 4. Resign `eosio` account
+### 4. Resign `eosio` and other system accounts
 
-To fully simulate an EOS chain just like EOS Mainnet, you should resign all system account to `eosio.prods` permission. Functions like multisig proposal will only work after system account are properly resigned.
+To fully simulate an EOS chain just like EOS Mainnet, you should resign all system accounts to `eosio.prods` permission. Functions like multisig proposal will only work after system accounts are properly resigned.
 
 To resign system accounts, just run `resign.sh`
 
@@ -182,6 +182,6 @@ To resign system accounts, just run `resign.sh`
 Now, you have a full fledged EOS chain on your laptop!
 
 
-### STOP and clear all the data
+### STOP and CLEAR
 
 Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down and rm `./data/` dir
