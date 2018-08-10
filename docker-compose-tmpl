@@ -8,4 +8,4 @@
     expose:
       - "{port}"
     volumes:
-      - /data/eos-bp{index}/:/opt/eosio/bin/data-dir
+      - ./data/eos-bp{index}/:/opt/eosio/bin/data-dir

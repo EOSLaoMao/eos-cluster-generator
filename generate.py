@@ -43,7 +43,7 @@ def generate():
     blacklist_prods = []
     f = open('docker-compose.yml', 'w')
     f.write(BIOS_DOCKER_COMPOSE)
-    d = '/data/bios-node'
+    d = './data/bios-node'
     if not os.path.exists(d):
         os.mkdir(d)
 
@@ -76,7 +76,7 @@ def generate():
         bp_name = ''.join([m[char] if char in m.keys() else char for char in 'bp%d' % i])
         prods.append(bp_name)
         line = tmpl.format(index=i, port=port, image=DOCKER_IMAGE)
-        d = '/data/eos-bp{index}'.format(index=i)
+        d = './data/eos-bp{index}'.format(index=i)
         if not os.path.exists(d):
             os.mkdir(d)
         f.write(line)
@@ -192,6 +192,7 @@ def generate_boot_script():
 
 if __name__ == '__main__':
     os.system("rm 0*.sh")
+    os.system("mkdir data")
     generate_boot_script()
     generate_wallet_script()
     generate_sys_accounts()

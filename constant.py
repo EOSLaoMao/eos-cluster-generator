@@ -27,5 +27,5 @@ services:
     expose:
       - "9876"
     volumes:
-      - /data/bios-node:/opt/eosio/bin/data-dir
+      - ./data/bios-node:/opt/eosio/bin/data-dir
 """ % DOCKER_IMAGE
