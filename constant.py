@@ -1,7 +1,12 @@
 from config import IP
+import platform
 #CMD_PREFIX = "docker exec nodeosd cleos --wallet-url http://%s:8900" % IP
-CMD_PREFIX = "docker exec nodeosd cleos"
-CMD_PREFIX_KEOSD = "docker exec nodeosd"
+if platform.uname()[0] == 'Darwin':
+    CMD_PREFIX = "docker exec nodeosd cleos"
+    CMD_PREFIX_KEOSD = "docker exec nodeosd"
+else:
+    CMD_PREFIX = "sudo docker exec nodeosd cleos"
+    CMD_PREFIX_KEOSD = "sudo docker exec nodeosd"
 SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.token',
 'eosio.msig',
