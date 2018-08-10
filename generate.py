@@ -50,7 +50,7 @@ def generate():
     genesis = open('./genesis.json', 'w')
     pub_key = process_keys('bios_keys', as_list=False)[0]['Public key']
     content = open('./genesis-tmpl').read().replace('PUBKEY', pub_key)
-    print content, pub_key
+    # print content, pub_key
     genesis.write(content)
     genesis.close()
 
@@ -137,7 +137,7 @@ def generate_voters(prods, backlist_prods):
         priv = key_pair['Private key']
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
-        cmd = """push action eosio.token issue '{"to":"%s","quantity":"50000000.0000 EOS","memo":"issue"}' -p eosio""" % account
+        cmd = """push action eosio.token issue '{"to":"%s","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
         bps = ' '.join(list(set(prods[:len(prods)-2]) | set(backlist_prods)))
@@ -179,9 +179,9 @@ def generate_wallet_script():
     wallet_script.write(cmd_wrapper("cleos wallet create -n default > wallet_password", CMD_PREFIX_KEOSD))
     wallet_script.close()
 
-def generate_start_script():
-    start_script = open("start.sh", 'w')
-    start_script.write('source bashrc\ndocker-compose up -d\n')
+def generate_boot_script():
+    start_script = open("boot.sh", 'w')
+    start_script.write("docker-compose up -d\nsleep 2\n")
     start_script.write("\nsleep 2\n".join(['./'+f for f in FILES]))
     start_script.close()
 
@@ -192,7 +192,7 @@ def generate_start_script():
 
 if __name__ == '__main__':
     os.system("rm 0*.sh")
-    generate_start_script()
+    generate_boot_script()
     generate_wallet_script()
     generate_sys_accounts()
     generate_eosio_token()
@@ -200,4 +200,4 @@ if __name__ == '__main__':
     generate_voters(prods, blacklist_prods)
     generate_import_script()
     os.system("chmod u+x *.sh")
-    print(set(prods) - set(blacklist_prods))
+    #print(set(prods) - set(blacklist_prods))
