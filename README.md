@@ -15,8 +15,8 @@ $ ./init.sh
 Starting docker container eos-key-generator
 c49a1993a069312e58268906cdd5586d2ec333775b6f014c829fad4ae2695568
 
-(1/3) Generating 10 keys for BP account...
-10 BP keys generated
+(1/3) Generating 3 keys for BP account...
+3 BP keys generated
 
 (2/3) Generating 3 keys for voter accounts...
 3 voter keys generated
@@ -26,7 +26,7 @@ All set!
 Now you can exec ./boot.sh to boot the network up!
 ```
 
-First, it will run a eos-key-generator container to generate EOS keys for BP and Voter accounts. It will generate 10 BP keys and 3 voter keys by default, you can change it in `init.sh` script. But make sure voter accounts >= 3, since we hardcoded to issue 60M EOS token to each voter and stake 50M each(to activate the chain, 150M EOS staked&vote needed).
+First, it will run a eos-key-generator container to generate EOS keys for BP and Voter accounts. It will generate 3 BP keys and 3 voter keys by default, you can change it in `init.sh` script. But make sure voter accounts >= 3, since we hardcoded to issue 60M EOS token to each voter and stake 50M each(to activate the chain, 150M EOS staked&vote needed).
 
 Note that we use an wellknown key "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV" for bios node located in `bios_key` file(You dont need to change it).
 
@@ -69,6 +69,8 @@ Each voter account has 60M EOS with 50M staked. At this point, BPs will be gener
 ```
 docker logs -f nodeosd
 ```
+
+Note that all the keys generated in step 1 are imported in `nodeosd` container, you can check the importion detail in `00_import_keys.sh`. Also, there is a `wallet_password` file created after the import which contains the password to unlock the default wallet in `nodeosd` container.
 
 
 ### 3. Resign `eosio` and other system accounts
