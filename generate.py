@@ -75,7 +75,8 @@ def generate():
     for i in range(0, len(keys)):
         bp_name = ''.join([m[char] if char in m.keys() else char for char in 'bp%d' % i])
         prods.append(bp_name)
-        line = tmpl.format(index=i, port=port, image=DOCKER_IMAGE)
+        http_port = port - 1000
+        line = tmpl.format(index=i, port=port, http_port=http_port, image=DOCKER_IMAGE)
         d = './data/eos-bp{index}'.format(index=i)
         if not os.path.exists(d):
             os.mkdir(d)
@@ -84,7 +85,7 @@ def generate():
         copyfile('./genesis.json', genesis)
         config_dest = os.path.join(d, 'config.ini')
         config_tmpl = open('./config.ini').read()
-        config = config_tmpl.format(bp_name=bp_name, port=port, key=keys[i], peers='\n'.join(peers), stale_production='false')
+        config = config_tmpl.format(bp_name=bp_name, port=port, http_port=http_port, key=keys[i], peers='\n'.join(peers), stale_production='false')
         if i%4 != 0:
             blacklist_prods.append(bp_name)
             config += '\nactor-blacklist = eoshackerone'
@@ -99,8 +100,7 @@ def generate():
         port -= 1
 
     # generate bios node config
-    bios_config = config_tmpl.format(bp_name='eosio', port='9876', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
-    bios_config += '\nhttp-server-address = 0.0.0.0:8888'
+    bios_config = config_tmpl.format(bp_name='eosio', port='9876', http_port='8888', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
     with open(bios_config_dest, 'w') as dest:
         dest.write(bios_config)
 

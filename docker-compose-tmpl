@@ -1,11 +1,13 @@
   nodeosd{index}:
     image: {image}
-    command: nodeosd.sh --data-dir "/opt/eosio/bin/data-dir" --genesis-json "/opt/eosio/bin/data-dir/genesis.json" --contracts-console
+    command: nodeos --config /opt/eosio/bin/data-dir/config.ini -d /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --contracts-console
     hostname: nodeosd
     container_name: nodeosd{index}
     ports:
       - {port}:{port}
+      - {http_port}:{http_port}
     expose:
       - "{port}"
+      - "{http_port}"
     volumes:
       - ./data/eos-bp{index}/:/opt/eosio/bin/data-dir

@@ -23,7 +23,7 @@ version: "3"
 services:
   nodeosd:
     image: %s
-    command: nodeosd.sh --data-dir "/opt/eosio/bin/data-dir" --genesis-json "/opt/eosio/bin/data-dir/genesis.json" --contracts-console
+    command: nodeos --config /opt/eosio/bin/data-dir/config.ini -d /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --contracts-console
     hostname: nodeosd
     container_name: nodeosd
     ports:
