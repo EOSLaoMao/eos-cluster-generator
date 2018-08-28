@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Docker image used to generate EOS keys
-IMAGE=eoslaomao/eos:1.1.6
+IMAGE=eoslaomao/eos:1.2.2
 
 #Number of block producers, default is 3.
 NUM_BPS=3
@@ -33,7 +33,7 @@ touch bp_keys voter_keys
 echo "(1/3) Generating $NUM_BPS keys for BP account..."
 for (( c=0; c<$NUM_BPS; c++ ))
 do
-    docker exec $CONTAINER cleos create key >> bp_keys
+    docker exec $CONTAINER cleos create key --to-console >> bp_keys
 done
 echo "$NUM_BPS BP keys generated"
 
@@ -42,7 +42,7 @@ echo
 echo "(2/3) Generating $NUM_VOTERS keys for voter accounts..."
 for (( c=0; c<$NUM_VOTERS; c++ ))
 do
-    docker exec $CONTAINER cleos create key >> voter_keys
+    docker exec $CONTAINER cleos create key --to-console >> voter_keys
 done
 echo "$NUM_VOTERS voter keys generated"
 
