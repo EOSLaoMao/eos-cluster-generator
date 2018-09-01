@@ -179,7 +179,7 @@ def generate_wallet_script():
     wallet_script = open(WALLET_SCRIPT, 'w')
     wallet_script.write(cmd_wrapper("sh -c 'rm /opt/eosio/bin/data-dir/default.wallet' || true", CMD_PREFIX_KEOSD))
     wallet_script.write(cmd_wrapper("sh -c 'rm ~/eosio-wallet/default.wallet' || true", CMD_PREFIX_KEOSD))
-    wallet_script.write(cmd_wrapper("cleos wallet create -n default --to-console > wallet_password", CMD_PREFIX_KEOSD))
+    wallet_script.write(cmd_wrapper("cleos wallet create -n default > wallet_password", CMD_PREFIX_KEOSD))
     wallet_script.close()
 
 def generate_boot_script():
