@@ -33,14 +33,14 @@ def process_keys(f, as_list=True):
             if not key_pair.has_key(name):
                 key_pair[name] = key
             if len(key_pair.keys()) == 2:
-                key_line = 'private-key = ["%s", "%s"]'
+                #key_line = 'private-key = ["%s", "%s"]'
+                key_line = 'signature-provider=%s=KEY:%s'
                 keys.append(key_line % (key_pair['Public key'], key_pair['Private key']))
                 key_pairs.append(key_pair)
                 key_pair = {}
     return keys if as_list else key_pairs
 
 def generate():
-    blacklist_prods = []
     f = open('docker-compose.yml', 'w')
     f.write(BIOS_DOCKER_COMPOSE)
     d = './data/bios-node'
@@ -86,10 +86,8 @@ def generate():
         config_dest = os.path.join(d, 'config.ini')
         config_tmpl = open('./config.ini').read()
         config = config_tmpl.format(bp_name=bp_name, port=port, http_port=http_port, key=keys[i], peers='\n'.join(peers), stale_production='false')
-        if i%4 != 0:
-            blacklist_prods.append(bp_name)
-            config += '\nactor-blacklist = eoshackerone'
-        pub, pri = eval(keys[i].split('=')[1])
+        pub = keys[i].split('=')[1]
+        pri = keys[i].split('=')[2][:3]
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
         cmd = 'system regproducer {bp_name} {pub}'
@@ -107,7 +105,7 @@ def generate():
     f.close()
     account_script.close()
     reg_script.close()
-    return prods, blacklist_prods
+    return prods
 
 
 def generate_import_script():
@@ -123,7 +121,7 @@ def generate_import_script():
         import_script.write(cmd_wrapper(cmd))
     import_script.close()
 
-def generate_voters(prods, backlist_prods):
+def generate_voters(prods):
     voter_keys = process_keys('voter_keys', as_list=False)
     account_script = open(FILES[2], 'aw')
     token_script = open(FILES[4], 'w')
@@ -140,7 +138,7 @@ def generate_voters(prods, backlist_prods):
         cmd = """push action eosio.token issue '{"to":"%s","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
-        bps = ' '.join(list(set(prods[:len(prods)-2]) | set(backlist_prods)))
+        bps = ' '.join(list(set(prods[:len(prods)-2])))
         cmd = 'system voteproducer prods %s %s' % (account, bps)
         vote_script.write(cmd_wrapper(cmd))
         cmd = 'system delegatebw %s %s "25000000 EOS" "25000000 EOS"' % (account, account)
@@ -200,8 +198,7 @@ if __name__ == '__main__':
     generate_wallet_script()
     generate_sys_accounts()
     generate_eosio_token()
-    prods, blacklist_prods = generate()
-    generate_voters(prods, blacklist_prods)
+    prods = generate()
+    generate_voters(prods)
     generate_import_script()
     os.system("chmod u+x *.sh")
-    #print(set(prods) - set(blacklist_prods))
