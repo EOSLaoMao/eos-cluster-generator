@@ -192,7 +192,6 @@ def generate_boot_script():
 
 
 if __name__ == '__main__':
-    os.system("rm 0*.sh")
     os.system("mkdir data")
     generate_boot_script()
     generate_wallet_script()
