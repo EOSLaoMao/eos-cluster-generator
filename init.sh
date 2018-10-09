@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Docker image used to generate EOS keys
-IMAGE=eoslaomao/eos:1.2.2
+IMAGE=eoslaomao/eos:1.3.0
 
 #Number of block producers, default is 3.
 NUM_BPS=3

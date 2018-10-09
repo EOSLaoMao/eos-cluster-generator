@@ -17,7 +17,7 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.stake',
 'eosio.vpay',
 'eosio.sudo']
-DOCKER_IMAGE = "eoslaomao/eos:1.2.5"
+DOCKER_IMAGE = "eoslaomao/eos:1.3.0"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
