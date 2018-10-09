@@ -86,9 +86,9 @@ To resign system accounts, just run `resign.sh`
 Now, you have a full fledged EOS chain on your laptop!
 
 
-### STOP and CLEAR
+### 4.STOP and CLEAR
 
-Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down and rm `./data/` dir
+Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down, then delete the generated keys and `./data/` dir.
 
 
 ## Alternative Mannual Steps(Specify keys mannually)
@@ -184,6 +184,6 @@ To resign system accounts, just run `resign.sh`
 Now, you have a full fledged EOS chain on your laptop!
 
 
-### STOP and CLEAR
+### 5.STOP and CLEAR
 
-Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down and rm `./data/` dir
+Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down, then delete the generated keys and `./data/` dir.
