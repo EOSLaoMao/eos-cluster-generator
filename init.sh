@@ -4,7 +4,7 @@
 IMAGE=eoslaomao/eos:1.2.2
 
 #Number of block producers, default is 3.
-NUM_BPS=3
+NUM_BPS=1
 
 #Number of voters, default is 3. Each voter will have 60M EOS token and 50M of it staked
 NUM_VOTERS=3
