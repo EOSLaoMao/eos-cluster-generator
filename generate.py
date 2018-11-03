@@ -12,11 +12,11 @@ from constant import (BIOS_DOCKER_COMPOSE,
 FILES = [
     '00_import_keys.sh',
     '01_create_token.sh',
-    '02_create_accounts.sh',
-    '03_reg_producers.sh',
-    '04_issue_voter_token.sh',
-    '05_delegate_voter_token.sh',
-    '06_vote.sh',
+#    '02_create_accounts.sh',
+#    '03_reg_producers.sh',
+#    '04_issue_voter_token.sh',
+#    '05_delegate_voter_token.sh',
+#    '06_vote.sh',
 ]
 WALLET_SCRIPT = "create_wallet.sh"
 
@@ -61,13 +61,13 @@ def generate():
     peers = ['p2p-peer-address = %s:9876' % IP]
     bios_keys = process_keys('bios_keys')
 
-     
+
     tmpl = open('docker-compose-tmpl').read()
     keys = process_keys('bp_keys')
 
     m = {'0': 'a', '6': 'b', '7': 'c', '8': 'd', '9': 'e'}
-    account_script = open(FILES[2], 'aw')
-    reg_script = open(FILES[3], 'w')
+    #account_script = open(FILES[2], 'aw')
+    #reg_script = open(FILES[3], 'w')
     prods = []
     port = 9875
     peer_prefix = 'p2p-peer-address = %s' % IP
@@ -89,9 +89,9 @@ def generate():
         pub = keys[i].split('=')[1]
         pri = keys[i].split('=')[2][:3]
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
-        account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
+        #account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
         cmd = 'system regproducer {bp_name} {pub}'
-        reg_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
+        #reg_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
         with open(config_dest, 'w') as dest:
             dest.write(config)
         peers.append('%s:%d' % (peer_prefix, port))
@@ -103,8 +103,8 @@ def generate():
         dest.write(bios_config)
 
     f.close()
-    account_script.close()
-    reg_script.close()
+    #account_script.close()
+    #reg_script.close()
     return prods
 
 
@@ -123,10 +123,10 @@ def generate_import_script():
 
 def generate_voters(prods):
     voter_keys = process_keys('voter_keys', as_list=False)
-    account_script = open(FILES[2], 'aw')
-    token_script = open(FILES[4], 'w')
-    delegate_script = open(FILES[5], 'w')
-    vote_script = open(FILES[6], 'w')
+    #account_script = open(FILES[2], 'aw')
+    #token_script = open(FILES[4], 'w')
+    #delegate_script = open(FILES[5], 'w')
+    #vote_script = open(FILES[6], 'w')
     i = 0
     for key_pair in voter_keys:
         i += 1
@@ -134,19 +134,19 @@ def generate_voters(prods):
         pub = key_pair['Public key']
         priv = key_pair['Private key']
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
-        account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
+    #    account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
         cmd = """push action eosio.token issue '{"to":"%s","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
-        token_script.write(cmd_wrapper(cmd))
+        #token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
         bps = ' '.join(list(set(prods[:len(prods)-2])))
         cmd = 'system voteproducer prods %s %s' % (account, bps)
-        vote_script.write(cmd_wrapper(cmd))
+        #vote_script.write(cmd_wrapper(cmd))
         cmd = 'system delegatebw %s %s "25000000 EOS" "25000000 EOS"' % (account, account)
-        delegate_script.write(cmd_wrapper(cmd))
-    account_script.close()
-    token_script.close()
-    vote_script.close()
-    delegate_script.close()
+        #delegate_script.write(cmd_wrapper(cmd))
+    #account_script.close()
+    #token_script.close()
+    #vote_script.close()
+    #delegate_script.close()
 
 def generate_eosio_token():
     eosio_script = open(FILES[1], 'aw')
