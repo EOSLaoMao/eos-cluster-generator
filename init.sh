@@ -49,7 +49,7 @@ echo "$NUM_VOTERS voter keys generated"
 echo
 
 echo "(3/3) Generating configs under /data/ dir..."
-python generate.py
+python2.7 generate.py
 
 echo "All set!"
 echo "Now you can exec ./boot.sh to boot the network up!"
