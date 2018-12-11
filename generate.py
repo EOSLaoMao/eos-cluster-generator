@@ -138,7 +138,10 @@ def generate_voters(prods):
         cmd = """push action eosio.token issue '{"to":"%s","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
-        bps = ' '.join(list(set(prods[:len(prods)-2])))
+        if len(prods) > 2:
+            bps = ' '.join(list(set(prods[:len(prods)-2])))
+        else:
+            bps = ' '.join(prods)
         cmd = 'system voteproducer prods %s %s' % (account, bps)
         vote_script.write(cmd_wrapper(cmd))
         cmd = 'system delegatebw %s %s "25000000 EOS" "25000000 EOS"' % (account, account)
