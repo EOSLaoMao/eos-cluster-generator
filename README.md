@@ -7,16 +7,16 @@ EOS Cluster Generator is a Docker based multi-bp config generater. You can use i
 
 ### 1. Run `init.sh` to generate keys and configs
 
-Run `init.sh`, will emit outputs as follows:
+Run `init.sh` with the number of block producers you want, which will emit outputs as follows:
 
 ```
-$ ./init.sh
+$ ./init.sh {NUM_BP}
 
 Starting docker container eos-key-generator
 c49a1993a069312e58268906cdd5586d2ec333775b6f014c829fad4ae2695568
 
-(1/3) Generating 3 keys for BP account...
-3 BP keys generated
+(1/3) Generating {NUM_BP} keys for BP account...
+{NUM_BP} BP keys generated
 
 (2/3) Generating 3 keys for voter accounts...
 3 voter keys generated
