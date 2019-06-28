@@ -135,7 +135,8 @@ def generate_voters(prods):
         priv = key_pair['Private key']
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
-        cmd = """push action eosio.token issue '{"to":"%s","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
+        cmd = """push action eosio.token issue '{"to":"eosio","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
+        cmd = """transfer eosio %s "60000000.0000 EOS" -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
         if len(prods) > 2:
