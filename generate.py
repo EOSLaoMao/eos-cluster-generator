@@ -135,7 +135,7 @@ def generate_voters(prods):
         priv = key_pair['Private key']
         cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
-        cmd = """push action eosio.token issue '{"to":"eosio","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
+        cmd = """push action eosio.token issue '{"to":"eosio","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio"""
         cmd = """transfer eosio %s "60000000.0000 EOS" -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
@@ -155,6 +155,7 @@ def generate_voters(prods):
 def generate_eosio_token():
     eosio_script = open(FILES[1], 'aw')
     cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
+    cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
     cmd += cmd_wrapper("""push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 EOS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token""")
     cmd += cmd_wrapper("""push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 EOS","memo":"issue"}' -p eosio""")
     cmd += cmd_wrapper("set contract eosio.msig contracts/eosio.msig")
@@ -170,6 +171,7 @@ def generate_sys_accounts():
     # generate sys account
     eosio_script = open(FILES[1], 'w')
 
+    eosio_script.write('docker cp 1.7.0 nodeosd:/contracts\n')
     eosio_script.write(cmd_wrapper('set contract eosio contracts/eosio.bios'))
 
     pub = process_keys('bios_keys', as_list=False)[0]['Public key']
@@ -188,6 +190,7 @@ def generate_wallet_script():
 def generate_boot_script():
     start_script = open("boot.sh", 'w')
     start_script.write("docker-compose up -d\nsleep 2\n")
+    start_script.write('./activate.sh\nsleep 2\n')
     start_script.write("\nsleep 2\n".join(['./'+f for f in FILES]))
     start_script.close()
 
