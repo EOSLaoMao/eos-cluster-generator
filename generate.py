@@ -161,6 +161,8 @@ def generate_eosio_token():
     cmd += cmd_wrapper("set contract eosio.msig contracts/eosio.msig")
     cmd += cmd_wrapper("""push action eosio setpriv '{"account": "eosio.msig", "is_priv": 1}' -p eosio""")
     cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
+    cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
+    cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
     cmd += cmd_wrapper("""push action eosio init '{"version": 0, "core": "4,EOS"}' -p eosio""")
     cmd += cmd_wrapper("set contract eosio.wrap contracts/eosio.wrap")
     cmd += cmd_wrapper("""push action eosio setpriv '{"account": "eosio.wrap", "is_priv": 1}' -p eosio""")
