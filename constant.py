@@ -17,7 +17,7 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.stake',
 'eosio.vpay',
 'eosio.wrap']
-DOCKER_IMAGE = "eoslaomao/eos:1.4.1-blacklist-plugin"
+DOCKER_IMAGE = "eoslaomao/eos:1.7.5-blacklist-plugin"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
