@@ -76,8 +76,8 @@ def generate():
         bp_name = ''.join([m[char] if char in m.keys() else char for char in 'bp%d' % i])
         prods.append(bp_name)
         http_port = port - 1000
-        line = tmpl.format(index=i, port=port, http_port=http_port, image=DOCKER_IMAGE)
-        d = './data/eos-bp{index}'.format(index=i)
+        line = tmpl.format(name=bp_name, port=port, http_port=http_port, image=DOCKER_IMAGE)
+        d = './data/eos-{name}'.format(name=bp_name)
         if not os.path.exists(d):
             os.mkdir(d)
         f.write(line)
@@ -173,7 +173,7 @@ def generate_sys_accounts():
     # generate sys account
     eosio_script = open(FILES[1], 'w')
 
-    eosio_script.write('docker cp 1.7.0 nodeosd:/contracts\n')
+    eosio_script.write('docker cp 1.6.1 nodeosd:/contracts\n')
     eosio_script.write(cmd_wrapper('set contract eosio contracts/eosio.bios'))
 
     pub = process_keys('bios_keys', as_list=False)[0]['Public key']
@@ -192,7 +192,7 @@ def generate_wallet_script():
 def generate_boot_script():
     start_script = open("boot.sh", 'w')
     start_script.write("docker-compose up -d\nsleep 2\n")
-    start_script.write('./activate.sh\nsleep 2\n')
+    #start_script.write('./activate.sh\nsleep 2\n')
     start_script.write("\nsleep 2\n".join(['./'+f for f in FILES]))
     start_script.close()
 
