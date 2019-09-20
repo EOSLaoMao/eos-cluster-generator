@@ -20,6 +20,7 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.rex',
 'eosio.assert']
 DOCKER_IMAGE = "eoslaomao/eos:1.8.3"
+DOCKER_IMAGE_ONE_SEVEN = "eoslaomao/eos:1.7.5-blacklist-plugin"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 

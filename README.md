@@ -2,20 +2,26 @@
 
 EOS Cluster Generator is a Docker based multi-bp config generater. You can use it to boot up an EOS testnet on your laptop in 5 minutes.
 
+This branch is used to test 1.7 and 1.8 mixture network for upgrade only.
+
 
 ## Quick Start
 
 ### 1. Run `init.sh` to generate keys and configs
 
-Run `init.sh` with the number of block producers you want, which will emit outputs as follows:
+Run `init.sh` will generate 21 BPs with 15 of them on v1.8.3 and 6 on v1.7.5. 
+
+You can specify num of BPs as the first param like this(default is 15):
 
 ```
-$ ./init.sh {NUM_BP}
+$ ./init.sh {NUM_OF_BPS_ON_1.8.3}
 
 Starting docker container eos-key-generator
 c49a1993a069312e58268906cdd5586d2ec333775b6f014c829fad4ae2695568
 
-(1/3) Generating {NUM_BP} keys for BP account...
+This script will create configs for 21 BPs which will have {NUM_OF_BPS_ON_1.8.3} BPs on v1.8.3, others will be v1.7.3
+
+(1/3) Generating 21 keys for BP account...
 {NUM_BP} BP keys generated
 
 (2/3) Generating 3 keys for voter accounts...
@@ -84,6 +90,18 @@ To resign system accounts, just run `resign.sh`
 ```
 
 Now, you have a full fledged EOS chain on your laptop!
+
+### 4. Test 1.8 Activation
+
+We have prepared scripts for you to activate 1.8:
+
+```
+./activate.sh
+```
+
+This script will try to activate 1.8 in this mixed network.
+
+Please test it and report the result back to 1.8 upgration group.
 
 
 ### STOP and CLEAR

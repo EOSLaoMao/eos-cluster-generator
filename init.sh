@@ -3,8 +3,10 @@
 #Docker image used to generate EOS keys
 IMAGE=eoslaomao/eos:1.2.2
 
-#Number of block producers, default is 3.
-NUM_BPS=${1:-3}
+#Number of 1.8.3 block producers default is 15, (21 - NUM_BPS) will be 1.7.5
+NUM_ONE_EIGHT_BPS=${1:-15}
+NUM_BPS=21
+echo $NUM_ONE_EIGHT_BPS > one_eight_bps
 
 #Number of voters, default is 3. Each voter will have 60M EOS token and 50M of it staked
 NUM_VOTERS=3
@@ -29,6 +31,10 @@ touch bp_keys voter_keys
 
 > bp_keys
 > voter_keys
+
+echo "This script will create configs for 21 BPs which will have $NUM_ONE_EIGHT_BPS BPs on v1.8.3, others will be v1.7.3"
+
+echo
 
 echo "(1/3) Generating $NUM_BPS keys for BP account..."
 for (( c=0; c<$NUM_BPS; c++ ))

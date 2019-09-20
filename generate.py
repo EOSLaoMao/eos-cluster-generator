@@ -7,7 +7,8 @@ from constant import (BIOS_DOCKER_COMPOSE,
                       CMD_PREFIX,
                       CMD_PREFIX_KEOSD,
                       SYSTEM_ACCOUNTS,
-                      DOCKER_IMAGE)
+                      DOCKER_IMAGE,
+                      DOCKER_IMAGE_ONE_SEVEN)
 
 FILES = [
     '00_import_keys.sh',
@@ -64,6 +65,7 @@ def generate():
      
     tmpl = open('docker-compose-tmpl').read()
     keys = process_keys('bp_keys')
+    num_one_eight_bp = int(open('one_eight_bps').read().strip())
 
     m = {'0': 'a', '6': 'b', '7': 'c', '8': 'd', '9': 'e'}
     account_script = open(FILES[2], 'aw')
@@ -73,10 +75,12 @@ def generate():
     peer_prefix = 'p2p-peer-address = %s' % IP
 
     for i in range(0, len(keys)):
+        image = DOCKER_IMAGE if num_one_eight_bp > 0 else DOCKER_IMAGE_ONE_SEVEN
+        num_one_eight_bp -= 1
         bp_name = ''.join([m[char] if char in m.keys() else char for char in 'bp%d' % i])
         prods.append(bp_name)
         http_port = port - 1000
-        line = tmpl.format(name=bp_name, port=port, http_port=http_port, image=DOCKER_IMAGE)
+        line = tmpl.format(name=bp_name, port=port, http_port=http_port, image=image)
         d = './data/eos-{name}'.format(name=bp_name)
         if not os.path.exists(d):
             os.mkdir(d)
