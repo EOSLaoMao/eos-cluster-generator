@@ -37,4 +37,4 @@ services:
       - "9876"
     volumes:
       - ./data/bios-node:/opt/eosio/bin/data-dir
-""" % DOCKER_IMAGE
+""" % DOCKER_IMAGE_ONE_SEVEN
