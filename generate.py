@@ -41,14 +41,15 @@ def process_keys(f, as_list=True):
                 key_pair = {}
     return keys if as_list else key_pairs
 
-def generate_peers():
+def generate_peers(p=0):
     port = 9875
     peer_prefix = 'p2p-peer-address = %s' % IP
     peers = ['p2p-peer-address = %s:9876' % IP]
 
     keys = process_keys('bp_keys')
     for i in range(0, len(keys)):
-        peers.append('%s:%d' % (peer_prefix, port))
+        if port != p:
+            peers.append('%s:%d' % (peer_prefix, port))
         port -= 1
     return peers
 
@@ -72,7 +73,6 @@ def generate():
     copyfile('./genesis.json', dest_genesis)
     bios_config_dest = os.path.join(d, 'config.ini')
     config_tmpl = open('./config.ini').read()
-    peers = generate_peers()
     bios_keys = process_keys('bios_keys')
 
      
@@ -104,6 +104,7 @@ def generate():
         copyfile('./genesis.json', genesis)
         config_dest = os.path.join(d, 'config.ini')
         config_tmpl = open('./config.ini').read()
+        peers = generate_peers(port)
         config = config_tmpl.format(bp_name=bp_name, port=port, http_port=http_port, key=keys[i], peers='\n'.join(peers), stale_production='false')
         pub = keys[i].split('=')[1]
         pri = keys[i].split('=')[2][:3]
@@ -117,6 +118,7 @@ def generate():
         port -= 1
 
     # generate bios node config
+    peers = generate_peers()
     bios_config = config_tmpl.format(bp_name='eosio', port='9876', http_port='8888', key=bios_keys[0], peers='\n'.join(peers), stale_production='true')
     with open(bios_config_dest, 'w') as dest:
         dest.write(bios_config)
