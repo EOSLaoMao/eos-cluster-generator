@@ -41,6 +41,19 @@ def process_keys(f, as_list=True):
                 key_pair = {}
     return keys if as_list else key_pairs
 
+def generate_peers():
+    port = 9875
+    peer_prefix = 'p2p-peer-address = %s' % IP
+    peers = ['p2p-peer-address = %s:9876' % IP]
+
+    keys = process_keys('bp_keys')
+    for i in range(0, len(keys)):
+        peers.append('%s:%d' % (peer_prefix, port))
+        port -= 1
+    return peers
+
+
+
 def generate():
     f = open('docker-compose.yml', 'w')
     f.write(BIOS_DOCKER_COMPOSE)
@@ -59,7 +72,7 @@ def generate():
     copyfile('./genesis.json', dest_genesis)
     bios_config_dest = os.path.join(d, 'config.ini')
     config_tmpl = open('./config.ini').read()
-    peers = ['p2p-peer-address = %s:9876' % IP]
+    peers = generate_peers()
     bios_keys = process_keys('bios_keys')
 
      
@@ -74,6 +87,8 @@ def generate():
     port = 9875
     peer_prefix = 'p2p-peer-address = %s' % IP
 
+
+    #keys = process_keys('bp_keys')
     for i in range(0, len(keys)):
         image = DOCKER_IMAGE if num_one_eight_bp > 0 else DOCKER_IMAGE_ONE_SEVEN
         num_one_eight_bp -= 1
@@ -98,7 +113,7 @@ def generate():
         reg_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
         with open(config_dest, 'w') as dest:
             dest.write(config)
-        peers.append('%s:%d' % (peer_prefix, port))
+        #peers.append('%s:%d' % (peer_prefix, port))
         port -= 1
 
     # generate bios node config
