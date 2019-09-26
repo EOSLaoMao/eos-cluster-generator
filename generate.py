@@ -173,7 +173,7 @@ def generate_sys_accounts():
     # generate sys account
     eosio_script = open(FILES[1], 'w')
 
-    eosio_script.write('docker cp 1.7.0 nodeosd:/contracts\n')
+    eosio_script.write('docker cp contracts/1.6.1 nodeosd:/contracts\n')
     eosio_script.write(cmd_wrapper('set contract eosio contracts/eosio.bios'))
 
     pub = process_keys('bios_keys', as_list=False)[0]['Public key']
