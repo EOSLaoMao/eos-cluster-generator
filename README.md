@@ -2,6 +2,8 @@
 
 EOS Cluster Generator is a Docker based multi-bp config generater. You can use it to boot up an EOS testnet on your laptop in 5 minutes.
 
+NOTE: This tool use EOSIO v2.0.0-rc1 to boot network, if you prefer to use older version, you can find it in branches like feature/v1.8.x accordingly.
+
 
 ## Quick Start
 
@@ -86,9 +88,9 @@ To resign system accounts, just run `resign.sh`
 Now, you have a full fledged EOS chain on your laptop!
 
 
-### STOP and CLEAR
+### 4. STOP and CLEAR
 
-Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down and rm `./data/` dir
+Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down, then delete the generated keys and `./data/` dir
 
 
 ## Alternative Mannual Steps(Specify keys mannually)
@@ -186,4 +188,4 @@ Now, you have a full fledged EOS chain on your laptop!
 
 ### STOP and CLEAR
 
-Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down and rm `./data/` dir
+Before you start over from step 1, please make sure you have ran `destroy.sh`, it will bring bios&BP nodes down, then delete the generated keys and `./data/` dir
