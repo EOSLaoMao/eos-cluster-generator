@@ -16,15 +16,17 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.saving',
 'eosio.stake',
 'eosio.vpay',
-'eosio.wrap']
-DOCKER_IMAGE = "eoslaomao/eos:1.4.1-blacklist-plugin"
+'eosio.wrap',
+'eosio.rex',
+'eosio.assert']
+DOCKER_IMAGE = "eoslaomao/eos:2.0.0-rc1"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
 services:
   nodeosd:
     image: %s
-    command: nodeos --config /opt/eosio/bin/data-dir/config.ini -d /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --contracts-console
+    command: nodeos --config-dir /opt/eosio/bin/data-dir -d /opt/eosio/bin/data-dir --genesis-json /opt/eosio/bin/data-dir/genesis.json --contracts-console
     hostname: nodeosd
     container_name: nodeosd
     ports:

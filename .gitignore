@@ -4,3 +4,4 @@
 docker-compose.yml
 genesis.json
 *.pyc
+data

@@ -88,7 +88,7 @@ def generate():
         config = config_tmpl.format(bp_name=bp_name, port=port, http_port=http_port, key=keys[i], peers='\n'.join(peers), stale_production='false')
         pub = keys[i].split('=')[1]
         pri = keys[i].split('=')[2][:3]
-        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
+        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10000.0000 EOS" --stake-cpu "10000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
         cmd = 'system regproducer {bp_name} {pub}'
         reg_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=bp_name)))
@@ -133,9 +133,10 @@ def generate_voters(prods):
         account = 'voter%d' % i
         pub = key_pair['Public key']
         priv = key_pair['Private key']
-        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "1000000.0000 EOS" --stake-cpu "1000000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
+        cmd = 'system newaccount eosio {bp_name} {pub} {pub} --stake-net "10000.0000 EOS" --stake-cpu "10000.0000 EOS" --buy-ram-kbytes "128000 KiB"'
         account_script.write(cmd_wrapper(cmd.format(pub=pub, bp_name=account)))
-        cmd = """push action eosio.token issue '{"to":"%s","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio""" % account
+        cmd = """push action eosio.token issue '{"to":"eosio","quantity":"60000000.0000 EOS","memo":"issue"}' -p eosio"""
+        cmd = """transfer eosio %s "60000000.0000 EOS" -p eosio""" % account
         token_script.write(cmd_wrapper(cmd))
         random.shuffle(prods)
         if len(prods) > 2:
@@ -154,12 +155,16 @@ def generate_voters(prods):
 def generate_eosio_token():
     eosio_script = open(FILES[1], 'aw')
     cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
+    cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
     cmd += cmd_wrapper("""push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 EOS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token""")
-    cmd += cmd_wrapper("""push action eosio.token issue '{"to":"eosio","quantity":"100000000.0000 EOS","memo":"issue"}' -p eosio""")
+    cmd += cmd_wrapper("""push action eosio.token issue '{"to":"eosio","quantity":"200000000.0000 EOS","memo":"issue"}' -p eosio""")
     cmd += cmd_wrapper("set contract eosio.msig contracts/eosio.msig")
     cmd += cmd_wrapper("""push action eosio setpriv '{"account": "eosio.msig", "is_priv": 1}' -p eosio""")
     cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
-    cmd += cmd_wrapper("set contract eosio.wrap contracts/eosio.sudo")
+    cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
+    cmd += cmd_wrapper("set contract eosio contracts/eosio.system")
+    cmd += cmd_wrapper("""push action eosio init '{"version": 0, "core": "4,EOS"}' -p eosio""")
+    cmd += cmd_wrapper("set contract eosio.wrap contracts/eosio.wrap")
     cmd += cmd_wrapper("""push action eosio setpriv '{"account": "eosio.wrap", "is_priv": 1}' -p eosio""")
     eosio_script.write(cmd)
     eosio_script.close()
@@ -168,6 +173,7 @@ def generate_sys_accounts():
     # generate sys account
     eosio_script = open(FILES[1], 'w')
 
+    eosio_script.write('docker cp contracts/1.6.1 nodeosd:/contracts\n')
     eosio_script.write(cmd_wrapper('set contract eosio contracts/eosio.bios'))
 
     pub = process_keys('bios_keys', as_list=False)[0]['Public key']
@@ -186,6 +192,7 @@ def generate_wallet_script():
 def generate_boot_script():
     start_script = open("boot.sh", 'w')
     start_script.write("docker-compose up -d\nsleep 2\n")
+    start_script.write('./activate.sh\nsleep 2\n')
     start_script.write("\nsleep 2\n".join(['./'+f for f in FILES]))
     start_script.close()
 
