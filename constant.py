@@ -19,7 +19,7 @@ SYSTEM_ACCOUNTS = ['eosio.bpay',
 'eosio.wrap',
 'eosio.rex',
 'eosio.assert']
-DOCKER_IMAGE = "eoslaomao/eos:2.0.0-rc1"
+DOCKER_IMAGE = "eoslaomao/eos:2.0.8-patch"
 BIOS_DOCKER_COMPOSE = """
 version: "3"
 
