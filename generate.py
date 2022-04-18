@@ -30,7 +30,7 @@ def process_keys(f, as_list=True):
     with open(f) as key_file:
         for line in key_file:
             name, key = line.strip().split(': ')
-            if not key_pair.has_key(name):
+            if not (name in key_pair.keys()):
                 key_pair[name] = key
             if len(key_pair.keys()) == 2:
                 #key_line = 'private-key = ["%s", "%s"]'
@@ -66,7 +66,7 @@ def generate():
     keys = process_keys('bp_keys')
 
     m = {'0': 'a', '6': 'b', '7': 'c', '8': 'd', '9': 'e'}
-    account_script = open(FILES[2], 'aw')
+    account_script = open(FILES[2], 'a+')
     reg_script = open(FILES[3], 'w')
     prods = []
     port = 9875
@@ -123,7 +123,7 @@ def generate_import_script():
 
 def generate_voters(prods):
     voter_keys = process_keys('voter_keys', as_list=False)
-    account_script = open(FILES[2], 'aw')
+    account_script = open(FILES[2], 'a+')
     token_script = open(FILES[4], 'w')
     delegate_script = open(FILES[5], 'w')
     vote_script = open(FILES[6], 'w')
@@ -153,7 +153,7 @@ def generate_voters(prods):
     delegate_script.close()
 
 def generate_eosio_token():
-    eosio_script = open(FILES[1], 'aw')
+    eosio_script = open(FILES[1], 'a+')
     cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
     cmd = cmd_wrapper('set contract eosio.token contracts/eosio.token')
     cmd += cmd_wrapper("""push action eosio.token create '{"issuer":"eosio", "maximum_supply": "1000000000.0000 EOS", "can_freeze": 0, "can_recall": 0, "can_whitelist": 0}' -p eosio.token""")

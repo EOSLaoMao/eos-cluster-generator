@@ -1,5 +1,7 @@
 docker-compose up -d
 sleep 2
+./activate.sh
+sleep 2
 ./00_import_keys.sh
 sleep 2
 ./01_create_token.sh
